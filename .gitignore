@@ -1,0 +1,17 @@
+venv/
+.env
+db.sqlite3
+project_credentials.json
+.mypy_cache
+.ruff_cache
+__pycache__
+__pycache__/
+.venv
+local
+.DS_Store
+.idea/
+*.pyc
+exam_correction/__pycache__/
+cert.pem
+key.pem
+media/
