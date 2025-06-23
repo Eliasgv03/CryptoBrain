@@ -5,32 +5,10 @@ from .fetchers import fetch_bitcoin_price, fetch_bitcoin_historical_price, fetch
 from .models import BitcoinPriceHistory, BitcoinNews
 import asyncio
 
-# Funciones funcionales
-def map_price_data(price_data, timestamp):
-    return {
-        'timestamp': timezone.datetime.fromtimestamp(timestamp / 1000) if timestamp else timezone.now(),
-        'price': price_data.get('price', 0),
-        'volume_24h': price_data.get('volume_24h', None)
-    }
-
-def filter_new_news(existing_urls, news_items):
-    return [item for item in news_items if item.get('url') not in existing_urls]
-
-def save_price_history(price_data):
-    return BitcoinPriceHistory.objects.update_or_create(
-        timestamp=price_data['timestamp'],
-        defaults={'price': price_data['price'], 'volume_24h': price_data['volume_24h']}
-    )[0]
-
-def save_news_item(news_item):
-    return BitcoinNews.objects.update_or_create(
-        url=news_item['url'],
-        defaults={
-            'title': news_item['title'],
-            'source': news_item.get('source', 'Unknown'),
-            'published_at': timezone.datetime.strptime(news_item['published_at'], '%Y-%m-%dT%H:%M:%SZ')
-        }
-    )[0]
+# Funciones funcionales importadas
+from .processor import map_price_data, filter_new_news, save_price_history, save_news_item
+from .processor import calculate_moving_average, calculate_price_trend, prepare_chart_data, preprocess_news_titles
+from .agent import agent_coordinator
 
 async def dashboard(request):
     # Recolectar datos asíncronamente
@@ -46,8 +24,10 @@ async def dashboard(request):
         save_price_history(current_data)
 
     if historical_data:
-        historical_entries = [save_price_history(map_price_data({'price': price, 'volume_24h': volume}, ts))
-                            for ts, price, volume in historical_data]
+        historical_entries = [
+            save_price_history(map_price_data({'price': price, 'volume_24h': volume}, ts))
+            for ts, price, volume in historical_data
+        ]
 
     if news:
         existing_urls = set(BitcoinNews.objects.values_list('url', flat=True))
@@ -55,14 +35,25 @@ async def dashboard(request):
         list(map(save_news_item, new_news_items))
 
     # Obtener datos almacenados para el dashboard
-    price_history = list(BitcoinPriceHistory.objects.all().order_by('timestamp')[:100])
+    price_history = BitcoinPriceHistory.objects.all().order_by('timestamp')[:100]
     stored_news = BitcoinNews.objects.all().order_by('-published_at')[:5]
+    news_titles = [n.title for n in stored_news]
 
+    # Calcular métricas y predicciones
+    moving_average = calculate_moving_average(price_history)
+    price_trend = calculate_price_trend(price_history)
+    sentiment = await agent_coordinator.analyze_sentiment(news_titles)
+    trend_prediction = await agent_coordinator.predict_trend(news_titles, price_trend, moving_average)
+    chart_data = prepare_chart_data(price_history)
+
+    # Preparar contexto para la plantilla
     context = {
         'crypto': 'BTC',
         'price_data': price_data,
         'news': stored_news,
-        'price_history': price_history,
+        'sentiment': sentiment,
+        'trend_prediction': trend_prediction,
+        'chart_data': chart_data,
         'last_updated': timezone.now().strftime('%H:%M:%S')
     }
     return render(request, 'analyzer/dashboard.html', context)
