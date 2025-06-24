@@ -1,0 +1,37 @@
+<div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold text-gray-100 flex items-center">
+        <svg class="w-8 h-8 mr-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+        Market Data
+    </h2>
+    <span class="text-sm text-gray-400">Updated: {{ last_updated }}</span>
+</div>
+{% if price_data %}
+<div class="space-y-4">
+    <!-- Current Price Card -->
+    <div class="transform hover:scale-105 transition-transform duration-300 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 hover:border-indigo-500 flex items-center">
+        <div class="p-3 bg-blue-500 bg-opacity-20 rounded-full">
+            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 10v-1m0 0c-1.11 0-2.08-.402-2.599-1M12 18c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z"></path></svg>
+        </div>
+        <div class="ml-4">
+            <p class="text-sm text-gray-400">Current Price (USD)</p>
+            <p class="text-2xl font-semibold text-white">${{ price_data.price|floatformat:2 }}</p>
+        </div>
+    </div>
+    <!-- 24h Volume Card -->
+    <div class="transform hover:scale-105 transition-transform duration-300 bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-700 hover:border-indigo-500 flex items-center">
+        <div class="p-3 bg-green-500 bg-opacity-20 rounded-full">
+            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
+        </div>
+        <div class="ml-4">
+            <p class="text-sm text-gray-400">Volume (24h)</p>
+            <p class="text-2xl font-semibold text-white">${{ price_data.volume_24h|floatformat:0 }}</p>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="flex flex-col items-center justify-center h-full p-6 bg-gray-800 border-2 border-dashed border-gray-700 rounded-lg shadow-inner">
+    <svg class="w-12 h-12 text-red-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+    <p class="text-red-400 font-semibold">Error loading market data.</p>
+    <p class="text-gray-500 text-sm">Please try again later.</p>
+</div>
+{% endif %}

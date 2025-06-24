@@ -1,24 +1,62 @@
-from functools import reduce
-from statistics import mean
-from .models import BitcoinPriceHistory
 import numpy as np
+from datetime import datetime
 
 def calculate_moving_average(price_history, window=7):
-    prices = [p.price for p in price_history]
+    """Calculates the moving average for a given price history."""
+    prices = [float(entry.price) for entry in price_history]
     if len(prices) < window:
-        return mean(prices) if prices else 0
-    return np.convolve(prices, np.ones(window)/window, mode='valid').tolist()[-1]
+        return 0.0
+    return np.convolve(prices, np.ones(window) / window, mode='valid').tolist()[-1]
 
 def calculate_price_trend(price_history):
-    if len(price_history) < 2:
-        return {'trend': 'neutral', 'confidence': 0.5}
-    prices = [p.price for p in price_history]
-    trend = 'bullish' if prices[-1] > prices[0] else 'bearish' if prices[-1] < prices[0] else 'neutral'
-    confidence = min(abs(prices[-1] - prices[0]) / prices[0], 1.0) if prices[0] != 0 else 0.5
-    return {'trend': trend, 'confidence': round(confidence, 2)}
+    """Calculates the price trend using linear regression and provides a qualitative description."""
+    prices = [float(entry.price) for entry in price_history]
+    if len(prices) < 2:
+        return {"slope": 0.0, "description": "Neutral"}
+
+    # Use linear regression to find the trend (slope)
+    x = np.arange(len(prices))
+    slope, _ = np.polyfit(x, prices, 1)
+
+    # Normalize slope to get a more stable trend indicator
+    # The slope is divided by the mean price to get a relative measure
+    normalized_slope = (slope / np.mean(prices)) * 100 if np.mean(prices) > 0 else 0
+
+    if normalized_slope > 0.5:
+        description = "Strongly Bullish"
+    elif normalized_slope > 0.1:
+        description = "Bullish"
+    elif normalized_slope < -0.5:
+        description = "Strongly Bearish"
+    elif normalized_slope < -0.1:
+        description = "Bearish"
+    else:
+        description = "Neutral"
+
+    return {"slope": slope, "description": description}
 
 def prepare_chart_data(price_history):
-    return [[p.timestamp.timestamp() * 1000, float(p.price)] for p in price_history]
+    """Prepares data for Chart.js, formatting timestamps for readability."""
+    if not price_history:
+        return {'labels': [], 'prices': []}
+        
+    # Format timestamps to a more readable 'Month-Day Hour:Minute' format
+    labels = [entry.timestamp.strftime('%b-%d %H:%M') for entry in price_history]
+    prices = [float(entry.price) for entry in price_history]
+    
+    return {
+        'labels': labels,
+        'prices': prices
+    }
 
 def preprocess_news_titles(news_titles):
-    return [title.strip() for title in news_titles if title and isinstance(title, str)]
+    """Cleans and deduplicates a list of news titles."""
+    processed = []
+    seen = set()
+    for title in news_titles:
+        cleaned_title = title.strip()
+        # Ensure title is not empty and has not been seen before (case-insensitive)
+        if cleaned_title and cleaned_title.lower() not in seen:
+            processed.append(cleaned_title)
+            seen.add(cleaned_title.lower())
+    return processed

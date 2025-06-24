@@ -1,4 +1,5 @@
 import aiohttp
+import os
 
 async def fetch_bitcoin_price():
     async with aiohttp.ClientSession() as session:
@@ -35,7 +36,7 @@ async def fetch_bitcoin_news():
                         'title': post['title'],
                         'source': post.get('source', {}).get('title'),
                         'published_at': post['published_at'],
-                        'url': post['url']
+                        'url': post.get('url', '') or post.get('domain', '') 
                     }
                     for post in data.get('results', [])[:5]
                 ]
