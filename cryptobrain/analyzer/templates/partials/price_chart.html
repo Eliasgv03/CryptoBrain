@@ -1,101 +1,19 @@
-<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
-    <h2 class="text-xl font-bold text-gray-800 mb-4">Gráfico de Precios (Últimos 7 días)</h2>
+<div class="p-6 bg-gray-800 border border-gray-700 rounded-xl shadow-lg">
+    <h2 class="text-2xl font-bold text-gray-100 mb-6 flex items-center">
+    <svg class="w-8 h-8 mr-3 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+    Bitcoin Price Chart (Last 7 Days)
+</h2>
     <div class="relative h-80">
-        <canvas id="priceChart"></canvas>
+        {% if error %}
+            <div class="flex items-center justify-center h-full">
+                <p class="text-red-400">{{ error }}</p>
+            </div>
+        {% else %}
+            <canvas id="priceChart"></canvas>
+        {% endif %}
     </div>
 </div>
 
+{% if not error %}
 <script id="chart-data" type="application/json">{{ chart_data|safe }}</script>
-
-<script>
-(function() {
-    if (typeof Chart === 'undefined') {
-        console.error('Chart.js is not loaded.');
-        return;
-    }
-
-    const chartCanvas = document.getElementById('priceChart');
-    if (!chartCanvas) return;
-
-    if (chartCanvas._chart) {
-        chartCanvas._chart.destroy();
-    }
-
-    const chartDataEl = document.getElementById('chart-data');
-    if (!chartDataEl) return;
-    
-    const chartData = JSON.parse(chartDataEl.textContent);
-    const ctx = chartCanvas.getContext('2d');
-
-    const gradient = ctx.createLinearGradient(0, 0, 0, 320);
-    gradient.addColorStop(0, 'rgba(79, 70, 229, 0.4)');
-    gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
-
-    const chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: chartData.labels,
-            datasets: [{
-                label: 'Precio (USD)',
-                data: chartData.prices,
-                borderColor: 'rgba(79, 70, 229, 1)',
-                backgroundColor: gradient,
-                fill: true,
-                tension: 0.4,
-                pointBackgroundColor: 'rgba(79, 70, 229, 1)',
-                pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(79, 70, 229, 1)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    title: { display: false },
-                    grid: { drawBorder: false },
-                    ticks: {
-                        callback: function(value) {
-                            return '$' + value.toLocaleString();
-                        }
-                    }
-                },
-                x: {
-                    title: { display: false },
-                    grid: { display: false }
-                }
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    backgroundColor: '#fff',
-                    titleColor: '#333',
-                    bodyColor: '#666',
-                    borderColor: '#ddd',
-                    borderWidth: 1,
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) { label += ': '; }
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
-                            }
-                            return label;
-                        }
-                    }
-                }
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index',
-            }
-        }
-    });
-
-    chartCanvas._chart = chart;
-})();
-</script>
+{% endif %}

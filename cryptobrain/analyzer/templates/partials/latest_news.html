@@ -1,21 +1,32 @@
-<h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-    <svg class="w-8 h-8 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m-4 3h2m-4 3h2m-4 3h2"></path></svg>
-    Latest News
-</h2>
-<div class="space-y-4 overflow-y-auto pr-2" style="max-height: 350px;">
-{% for item in news %}
-    <div class="transform hover:scale-105 transition-transform duration-300 bg-white p-4 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl">
-        <a href="{{ item.url }}" class="font-semibold text-indigo-700 hover:text-indigo-900 text-md" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
-        <div class="flex justify-between items-center mt-2 text-xs text-gray-500">
-            <p class="font-medium bg-gray-100 px-2 py-1 rounded-full">{{ item.source|default:'Unknown Source' }}</p>
-            <p>{{ item.published_at|date:'M d, Y' }}</p>
+<div hx-target="this" hx-swap="outerHTML">
+    <h2 class="text-2xl font-bold text-gray-100 mb-6 flex items-center">
+        <svg class="w-8 h-8 mr-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+        Latest News
+    </h2>
+
+    {% if error %}
+        <div class="bg-red-900 border border-red-600 p-4 rounded-lg">
+            <p class="text-white">{{ error }}</p>
         </div>
-    </div>
-{% empty %}
-    <div class="flex flex-col items-center justify-center h-full p-6 bg-white border-2 border-dashed border-gray-300 rounded-lg shadow-inner">
-        <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3h2m-4 3h2m-4 3h2m-4 3h2"></path></svg>
-        <p class="text-gray-500 font-semibold">No news available at the moment.</p>
-        <p class="text-gray-400 text-sm">Please check back later.</p>
-    </div>
-{% endfor %}
+    {% elif news %}
+        <ul class="space-y-4 overflow-y-auto pr-2" style="max-height: 350px;">
+            {% for item in news %}
+                <li class="bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
+                    <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="block">
+                        <h3 class="font-semibold text-md text-gray-200 hover:text-indigo-400">{{ item.title }}</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <p class="text-sm text-gray-400">{{ item.source|default:'Unknown Source' }}</p>
+                            <p class="text-sm text-gray-500">{{ item.published_at|date:"M d, Y" }}</p>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="flex flex-col items-center justify-center h-full p-6 bg-gray-800/50 border-2 border-dashed border-gray-700 rounded-lg">
+             <svg class="w-12 h-12 text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+            <p class="text-gray-400 font-semibold">No news available at the moment.</p>
+            <p class="text-gray-500 text-sm">Please check back later.</p>
+        </div>
+    {% endif %}
 </div>
