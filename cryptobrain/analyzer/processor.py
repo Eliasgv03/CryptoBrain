@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 def calculate_moving_average(price_history, window=7):
     """Calculates the moving average for a given price history."""
-    prices = [float(entry.price) for entry in price_history]
+    prices = list(map(lambda entry: float(entry.price), price_history))
     if len(prices) < window:
         return 0.0
     result = np.convolve(prices, np.ones(window) / window, mode='valid').tolist()[-1]
@@ -14,7 +14,7 @@ def calculate_moving_average(price_history, window=7):
 
 def calculate_price_trend(price_history):
     """Calculates the price trend using linear regression and provides a qualitative description."""
-    prices = [float(entry.price) for entry in price_history]
+    prices = list(map(lambda entry: float(entry.price), price_history))
     if len(prices) < 2:
         return {"slope": 0.0, "description": "Neutral"}
 
@@ -43,8 +43,9 @@ def prepare_chart_data(price_history):
     if not price_history:
         return {'labels': [], 'prices': []}
     
-    labels = [entry.timestamp.strftime('%b-%d %H:%M') for entry in price_history]
-    prices = [float(entry.price) for entry in price_history]
+    # Using map to apply a transformation function to each item in the lists
+    labels = list(map(lambda entry: entry.timestamp.strftime('%b-%d %H:%M'), price_history))
+    prices = list(map(lambda entry: float(entry.price), price_history))
     
     chart_data = {
         'labels': labels,

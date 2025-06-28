@@ -1,17 +1,40 @@
+# Virtual Environment
 venv/
+.venv/
+
+# Environment variables
 .env
+
+# Databases
 db.sqlite3
+
+# Credentials
 project_credentials.json
-.mypy_cache
-.ruff_cache
-__pycache__
+
+# Python cache
+.mypy_cache/
+.ruff_cache/
 __pycache__/
-.venv
-local
-.DS_Store
-.idea/
 *.pyc
-exam_correction/__pycache__/
+
+# Django static files
+staticfiles/
+media/
+
+# PyInstaller build artifacts
+build/
+dist/
+*.log
+
+# OS-specific files
+.DS_Store
+
+# IDE-specific files
+.idea/
+
+# Local settings (if any)
+local_settings.py
+
+# Other
 cert.pem
 key.pem
-media/
