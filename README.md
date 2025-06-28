@@ -10,15 +10,6 @@ The project stands out for its use of modern software patterns to achieve high p
 
 -   **Functional Programming**: It employs **list comprehensions** for declarative and concise data processing. This approach, inspired by functional programming, results in cleaner and more readable code, especially noticeable when manipulating price and news lists.
 
-## Technologies Used
-
--   **Backend**: Django 5.1
--   **Asynchronous Libraries**: `aiohttp`
--   **Artificial Intelligence**: `langchain`, `langchain-google-genai`
--   **Data Analysis**: `numpy`, `pydantic`
--   **Database**: SQLite (default)
--   **Environment Variables**: `python-dotenv`
-
 ## Local Setup
 
 Follow these steps to set up and run the project on your local machine.
