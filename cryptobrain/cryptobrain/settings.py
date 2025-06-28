@@ -86,30 +86,6 @@ DATABASES = {
 
 
 # Password validation
-# Caching
-# https://docs.djangoproject.com/en/5.1/topics/cache/
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'crypto_brain_cache',
-    }
-}
-
-
-# Password validation
-# Caching
-# https://docs.djangoproject.com/en/5.1/topics/cache/
-
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'crypto_brain_cache',
-    }
-}
-
-
-# Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -150,26 +126,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Logging Configuration
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
+# Caching
+# https://docs.djangoproject.com/en/5.1/topics/cache/
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'crypto_brain_cache',
+    }
 }
 
 # Logging Configuration

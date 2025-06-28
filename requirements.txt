@@ -1,2 +1,7 @@
 Django~=5.1.3
 python-dotenv
+aiohttp
+numpy
+langchain
+langchain-google-genai
+pydantic

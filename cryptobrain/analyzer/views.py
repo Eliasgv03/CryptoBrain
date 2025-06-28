@@ -12,6 +12,8 @@ import asyncio
 from asgiref.sync import sync_to_async
 from datetime import timedelta, datetime
 
+
+
 # --- Database Interaction Functions (Async-safe) ---
 
 @sync_to_async
@@ -143,7 +145,7 @@ async def latest_news(request):
             else:
                 logger.warning("Failed to fetch news from API.")
             
-            stored_news = await get_latest_news_from_db()
+            stored_news = await get_latest_news_from_db(limit=15)
             logger.info(f"Fetched {len(stored_news)} news items from DB.")
             cache.set(cache_key, stored_news, timeout=300)
             logger.info("News data cached.")
@@ -240,32 +242,19 @@ async def analysis(request):
 
 async def price_chart(request):
     logger.info("--- Price chart partial view requested ---")
-    cache_key = 'price_chart_data'
-    chart_data = cache.get(cache_key)
+    try:
+        prices = await get_price_history_from_db()
+        if not prices:
+            return render(request, 'partials/price_chart.html', {'error': 'No price data available.'})
 
-    if not chart_data:
-        logger.info("Price chart data not in cache, fetching fresh data.")
-        try:
-            historical_data = await fetch_bitcoin_historical_price(days=7)
-            if historical_data:
-                logger.info(f"Fetched {len(historical_data)} historical data points.")
-                price_list = [map_price_data({'price': p[1], 'volume_24h': p[2]}, p[0]) for p in historical_data]
-                await save_price_history_bulk(price_list)
-            else:
-                logger.warning("Failed to fetch historical data for chart.")
-            
-            price_history = await get_price_history_from_db()
-            logger.info(f"Fetched {len(price_history)} price history points from DB for chart.")
-            chart_data = prepare_chart_data(price_history)
-            cache.set(cache_key, chart_data, timeout=900)
-            logger.info("Price chart data cached.")
-        except Exception as e:
-            logger.error(f"Error in price_chart view: {e}", exc_info=True)
-            chart_data = {'labels': [], 'prices': []}
-            context = {'error': 'Could not fetch chart data.'}
-            return render(request, 'partials/price_chart.html', context)
-    else:
-        logger.info("Serving price chart data from cache.")
+        chart_data = {
+            'labels': [p.timestamp.strftime('%b %d') for p in prices],
+            'prices': [float(p.price) for p in prices]
+        }
 
-    chart_data_json = json.dumps(chart_data)
-    return render(request, 'partials/price_chart.html', {'chart_data': chart_data_json})
+        context = {'chart_data': json.dumps(chart_data)}
+        return render(request, 'partials/price_chart.html', context)
+
+    except Exception as e:
+        logger.error(f"Error in price_chart view: {e}", exc_info=True)
+        return render(request, 'partials/price_chart.html', {'error': 'Could not load chart data.'})
