@@ -6,23 +6,30 @@ import logging
 logger = logging.getLogger(__name__)
 
 async def fetch_bitcoin_price():
-    """Fetches the current price and 24h volume for Bitcoin from CoinGecko."""
+    """Fetches comprehensive Bitcoin market data from CoinGecko."""
     url = "https://api.coingecko.com/api/v3/coins/bitcoin"
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, timeout=30) as response:
-                response.raise_for_status()  # Raises an exception for 4XX/5XX status codes
+                response.raise_for_status()
                 data = await response.json()
-                
-                market_data = data.get('market_data', {})
-                current_price = market_data.get('current_price', {}).get('usd')
-                total_volume = market_data.get('total_volume', {}).get('usd')
 
-                if current_price is not None and total_volume is not None:
-                    logger.info("Successfully fetched Bitcoin price data.")
-                    return {'price': current_price, 'volume_24h': total_volume}
+                market_data = data.get('market_data', {})
+                
+                price_data = {
+                    'price': market_data.get('current_price', {}).get('usd'),
+                    'total_volume': market_data.get('total_volume', {}).get('usd'),
+                    'price_change_percentage_24h': market_data.get('price_change_percentage_24h'),
+                    'high_24h': market_data.get('high_24h', {}).get('usd'),
+                    'low_24h': market_data.get('low_24h', {}).get('usd'),
+                    'market_cap': market_data.get('market_cap', {}).get('usd'),
+                }
+
+                if price_data['price'] is not None and price_data['total_volume'] is not None:
+                    logger.info("Successfully fetched comprehensive Bitcoin price data.")
+                    return price_data
                 else:
-                    logger.error("Price or volume data missing in CoinGecko API response.")
+                    logger.error("Essential price or volume data missing in CoinGecko API response.")
                     return None
 
     except aiohttp.ClientError as e:

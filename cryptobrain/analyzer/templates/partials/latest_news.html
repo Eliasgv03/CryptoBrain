@@ -9,7 +9,7 @@
             <p class="text-white">{{ error }}</p>
         </div>
     {% elif news %}
-        <ul class="space-y-4 overflow-y-auto pr-2" style="max-height: 350px;">
+        <ul class="space-y-4 overflow-y-auto pr-2" style="max-height: 520px;">
             {% for item in news %}
                 <li class="bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
                     <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" class="block">

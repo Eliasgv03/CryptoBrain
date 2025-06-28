@@ -57,32 +57,32 @@
         <main class="p-6">
             <div class="container mx-auto">
                 <!-- Main grid for dashboard components -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                    <!-- Market Data & News Column -->
-                    <div class="lg:col-span-1 space-y-6">
+                    <!-- Left Column -->
+                    <div class="lg:col-span-1 space-y-8">
                         <!-- Market Data Section -->
                         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl" hx-get="{% url 'market_data' %}" hx-trigger="load, every 60s" hx-swap="innerHTML">
-                            <div class="htmx-indicator flex flex-col items-center justify-center h-48">
+                            <div class="htmx-indicator flex flex-col items-center justify-center h-24">
                                 <div class="loader"></div>
-                                <p class="mt-4 text-gray-400">Loading Bitcoin Market Data...</p>
+                                <p class="mt-4 text-gray-400">Loading Market Data...</p>
                             </div>
                         </div>
 
                         <!-- Latest News Section -->
                         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl" hx-get="{% url 'latest_news' %}" hx-trigger="load, every 300s" hx-swap="innerHTML">
-                             <div class="htmx-indicator flex flex-col items-center justify-center h-48">
+                            <div class="htmx-indicator flex flex-col items-center justify-center h-96">
                                 <div class="loader"></div>
                                 <p class="mt-4 text-gray-400">Fetching Latest News...</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Analysis & Chart Column -->
-                    <div class="lg:col-span-2 space-y-6">
+                    <!-- Right Column -->
+                    <div class="lg:col-span-2 space-y-8">
                         <!-- Analysis Section -->
                         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl" hx-get="{% url 'analysis' %}" hx-trigger="load, every 900s" hx-swap="innerHTML">
-                             <div class="htmx-indicator flex flex-col items-center justify-center h-48">
+                            <div class="htmx-indicator flex flex-col items-center justify-center h-96">
                                 <div class="loader"></div>
                                 <p class="mt-4 text-gray-400">Running Bitcoin AI Analysis...</p>
                             </div>
@@ -90,7 +90,7 @@
 
                         <!-- Price Chart Section -->
                         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl" hx-get="{% url 'price_chart' %}" hx-trigger="load, every 900s" hx-swap="innerHTML">
-                             <div class="htmx-indicator flex flex-col items-center justify-center h-48">
+                            <div class="htmx-indicator flex flex-col items-center justify-center h-80">
                                 <div class="loader"></div>
                                 <p class="mt-4 text-gray-400">Loading Price Chart...</p>
                             </div>

@@ -65,9 +65,9 @@ def get_price_history_from_db():
     return list(BitcoinPriceHistory.objects.filter(timestamp__gte=seven_days_ago).order_by('timestamp'))
 
 @sync_to_async
-def get_latest_news_from_db():
-    logger.info("Fetching latest news from DB.")
-    return list(BitcoinNews.objects.all().order_by('-published_at')[:5])
+def get_latest_news_from_db(limit=10):
+    logger.info(f"Fetching latest {limit} news from DB.")
+    return list(BitcoinNews.objects.all().order_by('-published_at')[:limit])
 
 @sync_to_async
 def purge_old_price_data():
@@ -183,7 +183,7 @@ async def analysis(request):
             return render(request, 'partials/analysis.html', {'error': 'Not enough data for analysis. Please refresh in a moment.'})
 
         latest_price = latest_price_data.price
-        volume_24h = latest_price_data.volume_24h
+        volume_24h = latest_price_data.volume_24h or 0  # Default to 0 if None
         news_headlines = [news.title for news in news_items]
         logger.info("Data successfully gathered.")
 
