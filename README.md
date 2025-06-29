@@ -2,23 +2,6 @@
 
 CryptoBrain is a sophisticated web application built with Django that leverages the power of Large Language Models (LLMs) via the Google Gemini API to provide real-time analysis and insights on Bitcoin. Users can ask complex questions in natural language, and the system fetches, processes, and analyzes market data, news, and prices to generate a comprehensive answer.
 
-
-## Features
-
--   **Real-Time Data**: Fetches up-to-the-minute Bitcoin prices and market news from external APIs.
--   **AI-Powered Analysis**: Uses an AI agent (LangChain + Google Gemini) to interpret data and answer user queries.
--   **Asynchronous Backend**: Built with async views in Django for high performance and non-blocking I/O.
--   **Standalone Executable**: Packaged with PyInstaller for easy distribution and execution on Windows without needing a Python environment.
-
-## Technologies Used
-
--   **Backend**: Django 5.1
--   **Web Server**: Waitress
--   **AI / LLMs**: LangChain, Google Gemini API
--   **Async Networking**: aiohttp
--   **Data Validation**: Pydantic
--   **Packaging**: PyInstaller
-
 ---
 
 ## Project Setup
